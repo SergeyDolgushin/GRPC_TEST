@@ -1,0 +1,15 @@
+LOCAL_BIN:=$(CURDIR)/bin
+OUT_DIR := pkg
+PROTO_DIRS :=api/note_v1
+
+install-deps:
+	set GOBIN=$(LOCAL_BIN) && go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+	set GOBIN=$(LOCAL_BIN) && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+
+generate: generate_note_api
+
+generate_note_api:
+	@echo Generating gRPC code...
+	@if not exist $(OUT_DIR)\note_v1 mkdir $(OUT_DIR)\note_v1
+	C:\protoc-36.2-win64\bin\protoc --proto_path=$(PROTO_DIRS) --go_out=$(OUT_DIR)/note_v1 --go_opt=paths=source_relative --plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go.exe --go-grpc_out=$(OUT_DIR)/note_v1 --go-grpc_opt=paths=source_relative --plugin=protoc-gen-go-grpc=$(LOCAL_BIN)/protoc-gen-go-grpc.exe api/note_v1/note.proto
+

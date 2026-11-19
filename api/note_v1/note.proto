@@ -8,7 +8,7 @@ import "google/protobuf/wrappers.proto";
 
 option go_package = "github.com/SergeyDolgushin/GRPC_TEST/pkg/note_v1;note_v1";
 
-services NoteV1 {
+service NoteV1 {
     rpc Create(CreateRequest) returns (CreateResponse);
     rpc Get(GetRequest) returns (GetResponse);
     rpc List(ListRequest) returns (ListResponse);
@@ -67,6 +67,6 @@ message UpdateRequest {
     UpdateNoteInfo info = 2;
 }
 
-message UpdateRequest {
+message DeleteRequest {
     int64 id = 1;
 }
