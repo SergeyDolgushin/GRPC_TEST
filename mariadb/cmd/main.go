@@ -1,48 +1,88 @@
 package main
 
 import (
-	"context"
 	"database/sql"
 	"flag"
 	"fmt"
 	"log"
 	"os"
+	"time"
 
+	sq "github.com/Masterminds/squirrel"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jaswdr/faker"
 	"github.com/joho/godotenv"
 )
 
+type Note struct {
+	ID        int
+	Title     string
+	Body      string
+	CreatedAt time.Time
+	UpdatedAt *time.Time
+}
+
 func main() {
+	// _ := context.Background()
 	dbDSN := readEnv()
-	ctx := context.Background()
-
-	fake := faker.New()
-
-	conn, err := sql.Open("mysql", dbDSN)
+	conn, _ := sql.Open("mysql", dbDSN)
 	defer conn.Close()
 
-	res, err := conn.ExecContext(ctx,
-		"INSERT INTO note (title, body) VALUES (?, ?)",
-		fake.Address().City(), //
-		fake.Lorem().Sentence(30),
-	)
+	fake := faker.New()
+	// sb := sq.StatementBuilder.PlaceholderFormat(sq.Question)
+
+	builderInsert := sq.Insert("note").
+		PlaceholderFormat(sq.Question).
+		Columns("title", "body").
+		Values(fake.Address().City(), fake.Address().StreetAddress()).
+		Suffix("RETURNING id")
+
+	query, arg, err := builderInsert.ToSql()
 	if err != nil {
-		log.Fatalf("Failed to insert: %v", err)
+		log.Fatalf("Failed to build query %v", err)
 	}
 
-	// Получение ID вставленной записи
-	lastID, err := res.LastInsertId()
+	var noteId int
+
+	err = conn.QueryRow(query, arg...).Scan(&noteId)
 	if err != nil {
-		log.Fatalf("Failed to get last ID: %v", err)
+		log.Fatalf("filaed to insert row %v", err)
 	}
 
-	rowsAffected, err := res.RowsAffected()
+	log.Printf("inserted row with id: %v", noteId)
+
+	builderSelect := sq.Select("id", "title", "body", "created_at", "updated_at").
+		From("note").
+		// PlaceholderFormat(sq.Question).
+		OrderBy("id ASC").
+		Limit(10)
+
+	query, arg, err = builderSelect.ToSql()
 	if err != nil {
-		log.Fatalf("Failed to get rows affected: %v", err)
+		log.Fatalf("Failed to build query %v", err)
+	}
+	log.Printf(query, arg)
+	rows, err := conn.Query(query)
+	if err != nil {
+		log.Fatalf("failed select query %v", err)
 	}
 
-	fmt.Printf("Inserted ID: %d, Rows affected: %d\n", lastID, rowsAffected)
+	defer rows.Close()
+
+	for rows.Next() {
+		var id int
+		var title, body string
+		var created_at time.Time
+		var updated_at sql.NullTime
+
+		err = rows.Scan(&id, &title, &body, &created_at, &updated_at)
+		if err != nil {
+			log.Fatalf("Failed to scan %v", err)
+		}
+
+		log.Printf("id: %d, title: %s, body: %s, created: %v, updated: %v", id, title, body, created_at, updated_at)
+
+	}
 
 }
 
