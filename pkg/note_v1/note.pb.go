@@ -362,7 +362,7 @@ func (x *GetRequest) GetId() int64 {
 
 type GetResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Note          *Note                  `protobuf:"bytes,1,opt,name=note,proto3" json:"note,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -397,11 +397,11 @@ func (*GetResponse) Descriptor() ([]byte, []int) {
 	return file_note_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *GetResponse) GetId() int64 {
+func (x *GetResponse) GetNote() *Note {
 	if x != nil {
-		return x.Id
+		return x.Note
 	}
-	return 0
+	return nil
 }
 
 type ListRequest struct {
@@ -625,9 +625,9 @@ const file_note_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x1c\n" +
 	"\n" +
 	"GetRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\x1d\n" +
-	"\vGetResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\";\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"0\n" +
+	"\vGetResponse\x12!\n" +
+	"\x04note\x18\x01 \x01(\v2\r.note_v1.NoteR\x04note\";\n" +
 	"\vListRequest\x12\x14\n" +
 	"\x05limit\x18\x01 \x01(\x03R\x05limit\x12\x16\n" +
 	"\x06offset\x18\x02 \x01(\x03R\x06offset\"3\n" +
@@ -684,23 +684,24 @@ var file_note_proto_depIdxs = []int32{
 	12, // 5: note_v1.UpdateNoteInfo.author:type_name -> google.protobuf.StringValue
 	13, // 6: note_v1.UpdateNoteInfo.is_public:type_name -> google.protobuf.BoolValue
 	0,  // 7: note_v1.CreateRequest.info:type_name -> note_v1.NoteInfo
-	1,  // 8: note_v1.ListResponse.notes:type_name -> note_v1.Note
-	2,  // 9: note_v1.UpdateRequest.info:type_name -> note_v1.UpdateNoteInfo
-	3,  // 10: note_v1.NoteV1.Create:input_type -> note_v1.CreateRequest
-	5,  // 11: note_v1.NoteV1.Get:input_type -> note_v1.GetRequest
-	7,  // 12: note_v1.NoteV1.List:input_type -> note_v1.ListRequest
-	9,  // 13: note_v1.NoteV1.Update:input_type -> note_v1.UpdateRequest
-	10, // 14: note_v1.NoteV1.Delete:input_type -> note_v1.DeleteRequest
-	4,  // 15: note_v1.NoteV1.Create:output_type -> note_v1.CreateResponse
-	6,  // 16: note_v1.NoteV1.Get:output_type -> note_v1.GetResponse
-	8,  // 17: note_v1.NoteV1.List:output_type -> note_v1.ListResponse
-	14, // 18: note_v1.NoteV1.Update:output_type -> google.protobuf.Empty
-	14, // 19: note_v1.NoteV1.Delete:output_type -> google.protobuf.Empty
-	15, // [15:20] is the sub-list for method output_type
-	10, // [10:15] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	1,  // 8: note_v1.GetResponse.note:type_name -> note_v1.Note
+	1,  // 9: note_v1.ListResponse.notes:type_name -> note_v1.Note
+	2,  // 10: note_v1.UpdateRequest.info:type_name -> note_v1.UpdateNoteInfo
+	3,  // 11: note_v1.NoteV1.Create:input_type -> note_v1.CreateRequest
+	5,  // 12: note_v1.NoteV1.Get:input_type -> note_v1.GetRequest
+	7,  // 13: note_v1.NoteV1.List:input_type -> note_v1.ListRequest
+	9,  // 14: note_v1.NoteV1.Update:input_type -> note_v1.UpdateRequest
+	10, // 15: note_v1.NoteV1.Delete:input_type -> note_v1.DeleteRequest
+	4,  // 16: note_v1.NoteV1.Create:output_type -> note_v1.CreateResponse
+	6,  // 17: note_v1.NoteV1.Get:output_type -> note_v1.GetResponse
+	8,  // 18: note_v1.NoteV1.List:output_type -> note_v1.ListResponse
+	14, // 19: note_v1.NoteV1.Update:output_type -> google.protobuf.Empty
+	14, // 20: note_v1.NoteV1.Delete:output_type -> google.protobuf.Empty
+	16, // [16:21] is the sub-list for method output_type
+	11, // [11:16] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_note_proto_init() }

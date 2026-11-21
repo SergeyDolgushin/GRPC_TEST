@@ -50,7 +50,7 @@ message GetRequest {
 }
 
 message GetResponse {
-    int64 id = 1;
+    Note note = 1;
 }
 
 message ListRequest {

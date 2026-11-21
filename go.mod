@@ -1,4 +1,4 @@
-module grpc
+module github.com/SergeyDolgushin/GRPC_TEST
 
 go 1.26.1
 
@@ -8,6 +8,7 @@ require (
 )
 
 require (
+
 	golang.org/x/net v0.60.0 // indirect
 	golang.org/x/sys v0.48.0 // indirect
 	golang.org/x/text v0.42.0 // indirect
