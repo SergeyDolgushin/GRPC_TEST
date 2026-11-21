@@ -16,3 +16,6 @@ local-migration-status:
 
 local-migration-up:
 	$(LOCAL_BIN)/goose.exe -dir $(LOCAL_MIGRATION_DIR) mysql $(LOCAL_MIGRATION_DSN) up -v
+
+local-migration-down:
+	$(LOCAL_BIN)/goose.exe -dir $(LOCAL_MIGRATION_DIR) mysql $(LOCAL_MIGRATION_DSN) down -v
