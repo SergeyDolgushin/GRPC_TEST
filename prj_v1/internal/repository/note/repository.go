@@ -3,6 +3,7 @@ package note
 import (
 	"context"
 	"database/sql"
+	"log"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/SergeyDolgushin/GRPC_TEST/internal/repository"
@@ -30,17 +31,20 @@ func NewRepository(db *sql.DB) repository.NoteRepository {
 }
 
 func (r *repo) Create(ctx context.Context, info *desc.NoteInfo) (int64, error) {
+
 	builder := sq.Insert(tableName).
 		Columns(titleColumn, contentColumn).
 		Values(info.Title, info.Content).
 		Suffix("RETURNING id")
 
 	query, args, err := builder.ToSql()
+	log.Printf("CREATE REQUEST, %v, %v, %v", query, info.Title, info.Content)
 	if err != nil {
 		return 0, err
 	}
 	var id int64
 	err = r.db.QueryRowContext(ctx, query, args...).Scan(&id)
+	log.Printf("CREATE REQUEST, %v", err)
 	if err != nil {
 		return 0, err
 	}
@@ -50,7 +54,8 @@ func (r *repo) Create(ctx context.Context, info *desc.NoteInfo) (int64, error) {
 
 func (r *repo) Get(ctx context.Context, id int64) (*desc.Note, error) {
 	builder := sq.Select(idColumn, titleColumn, contentColumn, createdAtColumn, updatedAtColumn).
-		From(tableName).Where(sq.Eq{idColumn: id}).
+		From(tableName).
+		Where(sq.Eq{idColumn: id}).
 		Limit(10)
 
 	query, args, err := builder.ToSql()
@@ -58,9 +63,15 @@ func (r *repo) Get(ctx context.Context, id int64) (*desc.Note, error) {
 		return nil, err
 	}
 
+	log.Printf("GET REQUEST, %v, %v, %v", query, id, args)
+
 	var note model.Note
+	note.Info = &model.Info{}
+
 	err = r.db.QueryRowContext(ctx, query, args...).
-		Scan(&note.ID, &note.Info.Title, &note.Info.Content)
+		Scan(&note.ID, &note.Info.Title, &note.Info.Content, &note.Created_at, &note.Updated_at)
+
+	log.Printf("GET REQUEST, %v", err)
 	if err != nil {
 		return nil, err
 	}
